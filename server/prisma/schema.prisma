@@ -18,10 +18,25 @@ enum Role {
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
-  name      String?
+  username      String?
   password  String
   role      Role     @default(VISITOR)
+  isActive Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  // reletions
+  refreshTokens RefreshToken[]
 }
 
+model RefreshToken {
+  id Int @id @default(autoincrement())
+  token String @unique
+  userId Int
+  user User @relation(fields: [userId], references:[id])
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  // the next two lines create indexes on token and userId fields
+  // to help with faster findings rows based on these fields
+  @@index([token])
+  @@index([userId])
+}
